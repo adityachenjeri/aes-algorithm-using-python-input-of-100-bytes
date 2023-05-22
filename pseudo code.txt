@@ -1,0 +1,102 @@
+# AES Encryption Pseudo Code
+mul_matrix[]
+
+function aes_encrypt(plaintext, key):
+    # Perform key expansion
+    expanded_key = key_expansion(key)
+    
+    # Initial round key addition
+    state = add_round_key(plaintext, expanded_key[0:4])
+    
+    # Perform 9 rounds of encryption
+    for round = 1 to 9:
+        state = substitute_bytes(state)
+        state = shift_rows(state)
+        state = mix_columns(state)
+        state = add_round_key(state, expanded_key[round*4:(round*4)+4])
+    
+    # Final round
+    state = substitute_bytes(state)
+    state = shift_rows(state)
+    state = add_round_key(state, expanded_key[40:44])
+    
+    return state
+
+
+# AES Decryption Pseudo Code
+
+function aes_decrypt(ciphertext, key):
+    # Perform key expansion
+    expanded_key = key_expansion(key)
+    
+    # Initial round key addition
+    state = add_round_key(ciphertext, expanded_key[40:44])
+    
+    # Perform 9 rounds of decryption
+    for round = 9 to 1:
+        state = inverse_shift_rows(state)
+        state = inverse_substitute_bytes(state)
+        state = add_round_key(state, expanded_key[(round*4)-4:(round*4)])
+        state = inverse_mix_columns(state)
+    
+    # Final round
+    state = inverse_shift_rows(state)
+    state = inverse_substitute_bytes(state)
+    state = add_round_key(state, expanded_key[0:4])
+    
+    return state
+
+
+# Key Expansion Pseudo Code
+
+function key_expansion(key):
+    expanded_key = key
+    
+    for i = 4 to 44:
+        temp = expanded_key[i-1]
+        if i mod 4 == 0:
+            temp = sub_word(rot_word(temp)) XOR rcon[i//4]
+        expanded_key[i] = expanded_key[i-4] XOR temp
+    
+    return expanded_key
+
+
+# Utility Functions
+
+function substitute_bytes(state):
+    # Perform byte substitution using S-Box or a similar substitution table
+    for i=0 to 16:
+		state[i]=sbox[state[i]]
+    return state[]
+
+
+function shift_rows(state):
+    # Shift the rows of the state matrix cyclically
+    for i=0 to 3:
+		for j=0 to i:
+			rightcircularshift(state)
+    return state
+
+function mix_columns(state):
+    # Mix the columns of the state matrix using matrix multiplication
+    for i=0 to 3:
+    		state[i]*mul_matrix[]
+    return mixed_state
+
+
+function add_round_key(state, round_key):
+    # Perform bitwise XOR between the state matrix and the round key
+    for i=0 to 16:
+		state[i]=state[i] XOR roundkey[i]
+    return result_state
+
+function rot_word(word):
+    # Perform a circular left shift on a 4-byte word
+	leftcircularshift(word)
+    return rotated_word
+
+function sub_word(word):
+    # Substitute each byte of the word using S-Box or a similar substitution table
+    for i=0 to 3:
+		word[i]=sox[word[i]]
+    return substituted_word
